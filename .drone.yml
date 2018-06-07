@@ -1,0 +1,5 @@
+pipeline:
+  docker:
+    image: plugins/docker
+    repo: jonnrb/radarsign
+    auth: ${DOCKER_AUTH}
