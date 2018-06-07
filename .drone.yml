@@ -2,4 +2,4 @@ pipeline:
   docker:
     image: plugins/docker
     repo: jonnrb/radarsign
-    auth: ${DOCKER_AUTH}
+    secrets: [ docker_username, docker_password ]
