@@ -1,4 +1,4 @@
-from golang as build
+from golang:1.10.3 as build
 workdir /go/src/go.jonnrb.io/radarsign
 add . .
 run go get . \
