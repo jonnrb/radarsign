@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jonnrb/speedtest"
+	"go.jonnrb.io/speedtest"
 )
 
 type mockRadarSign struct {

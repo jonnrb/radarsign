@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jonnrb/speedtest"
+	"go.jonnrb.io/speedtest"
 )
 
 // Helper to make a new Throttler. Source field is left zero because it is

@@ -1,5 +1,5 @@
 from golang as build
-workdir /go/src/github.com/jonnrb/radarsign
+workdir /go/src/go.jonnrb.io/radarsign
 add . .
 run go get . \
  && CGO_ENABLED=0 GOOS=linux go build . \

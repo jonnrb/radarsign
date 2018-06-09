@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jonnrb/speedtest"
+	"go.jonnrb.io/speedtest"
 )
 
 type RadarSign interface {
