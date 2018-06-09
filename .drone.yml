@@ -1,4 +1,14 @@
+workspace:
+  base: /go
+  path: src/go.jonnrb.io/radarsign
+
 pipeline:
+  build:
+    image: golang:latest
+    commands:
+      - go get -t ./...
+      - go test -v ./...
+      - go build ./...
   docker:
     image: plugins/docker
     repo: jonnrb/radarsign
