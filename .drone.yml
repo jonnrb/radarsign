@@ -12,4 +12,5 @@ pipeline:
   docker:
     image: plugins/docker
     repo: jonnrb/radarsign
+    storage_driver: overlay2
     secrets: [ docker_username, docker_password ]
