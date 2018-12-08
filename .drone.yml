@@ -1,16 +1,22 @@
+kind: pipeline
+name: default
+
 workspace:
   base: /go
   path: src/go.jonnrb.io/radarsign
 
-pipeline:
-  build:
-    image: golang:latest
-    commands:
-      - go get -t ./...
-      - go test -v ./...
-      - go build ./...
-  docker:
-    image: plugins/docker
+steps:
+- name: build
+  image: golang:latest
+  commands:
+  - go get -t ./...
+  - go test -v ./...
+  - go build ./...
+- name: docker
+  image: plugins/docker
+  settings:
     repo: jonnrb/radarsign
-    storage_driver: overlay2
-    secrets: [ docker_username, docker_password ]
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
