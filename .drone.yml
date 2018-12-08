@@ -1,9 +1,10 @@
+---
 kind: pipeline
 name: default
 
-workspace:
-  base: /go
-  path: src/go.jonnrb.io/radarsign
+platform:
+  os: linux
+  arch: amd64
 
 steps:
 - name: build
@@ -12,11 +13,14 @@ steps:
   - go get -t ./...
   - go test -v ./...
   - go build ./...
+
 - name: docker
   image: plugins/docker
   settings:
+    password:
+      from_secret: docker_password
     repo: jonnrb/radarsign
     username:
       from_secret: docker_username
-    password:
-      from_secret: docker_password
+
+...
