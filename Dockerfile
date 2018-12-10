@@ -1,11 +1,8 @@
-from golang:1.10.3 as build
-workdir /go/src/go.jonnrb.io/radarsign
-add . .
-run go get . \
- && CGO_ENABLED=0 GOOS=linux go build . \
- && mv radarsign /
+from golang:1.10.2 as build
+add . /src
+run cd /src && CGO_ENABLED=0 go get .
 
 from gcr.io/distroless/base
-copy --from=build /radarsign /radarsign
+copy --from=build /go/bin/radarsign /radarsign
 entrypoint ["/radarsign"]
 cmd ["-logtostderr", "-v=1"]
