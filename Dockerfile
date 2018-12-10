@@ -1,4 +1,4 @@
-from golang:1.10.2 as build
+from golang:1.11.2 as build
 add . /src
 run cd /src && CGO_ENABLED=0 go get .
 
