@@ -21,6 +21,8 @@ go.jonnrb.io/speedtest v0.0.0-20180609165149-280a3f45cd03 h1:bif5oj6VMnZ1dtXxFNj
 go.jonnrb.io/speedtest v0.0.0-20180609165149-280a3f45cd03/go.mod h1:QebQ9KtrN/Zu6MkyfuwoFfdgAq1FpWhZ8I2H/Nl71LI=
 go.jonnrb.io/speedtest v0.1.0 h1:qLElnVOkr/CA7N298kVkKrQogBeaqP68uTTb3WvohZo=
 go.jonnrb.io/speedtest v0.1.0/go.mod h1:dP9gMSs+6rl+XHtJHeAQkjYbYtyVIsj7T61848kzC1M=
+go.jonnrb.io/speedtest v0.1.1 h1:rPb/F55X02BrDzoKDHb4tMbaK+VaGhJNpI0xr9XNQtY=
+go.jonnrb.io/speedtest v0.1.1/go.mod h1:SkMQVj4oTpmO3V+lzC3XNttlelD+R9brzL/BXa6EQGk=
 golang.org/x/net v0.0.0-20181201002055-351d144fa1fc h1:a3CU5tJYVj92DY2LaA1kUkrsqD5/3mLDhx2NcNqyW+0=
 golang.org/x/net v0.0.0-20181201002055-351d144fa1fc/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20181207154023-610586996380 h1:zPQexyRtNYBc7bcHmehl1dH6TB3qn8zytv8cBGLDNY0=
