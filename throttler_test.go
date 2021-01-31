@@ -6,20 +6,20 @@ import (
 	"testing"
 	"time"
 
-	"go.jonnrb.io/speedtest"
+	"go.jonnrb.io/speedtest/units"
 )
 
 type mockRadarSign struct {
-	ReadImpl func(ctx context.Context) (speedtest.BytesPerSecond, error)
+	ReadImpl func(ctx context.Context) (units.BytesPerSecond, error)
 }
 
-func (m *mockRadarSign) Read(ctx context.Context) (speedtest.BytesPerSecond, error) {
+func (m *mockRadarSign) Read(ctx context.Context) (units.BytesPerSecond, error) {
 	return m.ReadImpl(ctx)
 }
 
 func TestThrottler_Read_Throttled(t *testing.T) {
 	const (
-		expected = 42 * speedtest.GBps
+		expected = 42 * units.GBps
 		runs     = 10
 	)
 
@@ -28,7 +28,7 @@ func TestThrottler_Read_Throttled(t *testing.T) {
 	th.Interval = 10 * time.Hour
 
 	i := 0
-	r := func(ctx context.Context) (speedtest.BytesPerSecond, error) {
+	r := func(ctx context.Context) (units.BytesPerSecond, error) {
 		if i > 0 {
 			t.Log("Throttler should have only allowed 1 read from source.")
 			t.Fail()
@@ -52,7 +52,7 @@ func TestThrottler_Read_Throttled(t *testing.T) {
 
 func TestThrottler_Read_IntervalExceeded(t *testing.T) {
 	const (
-		expected = 42 * speedtest.GBps
+		expected = 42 * units.GBps
 		runs     = 10
 		interval = 2 * time.Millisecond
 	)
@@ -62,7 +62,7 @@ func TestThrottler_Read_IntervalExceeded(t *testing.T) {
 	th.Interval = interval
 
 	i := 0
-	r := func(ctx context.Context) (speedtest.BytesPerSecond, error) {
+	r := func(ctx context.Context) (units.BytesPerSecond, error) {
 		i++
 		if i > runs {
 			t.Logf("Throttler should have only done at most %v reads from source.", runs)
@@ -103,10 +103,10 @@ func TestThrottler_Read_ContextDone(t *testing.T) {
 
 	th := NewThrottler(l)
 	badErr := fmt.Errorf("should not get here")
-	r := func(ctx context.Context) (speedtest.BytesPerSecond, error) {
+	r := func(ctx context.Context) (units.BytesPerSecond, error) {
 		t.Fail()
 		t.Log("Read should never execute.")
-		return 42 * speedtest.GBps, badErr
+		return 42 * units.GBps, badErr
 	}
 	th.Source = &mockRadarSign{r}
 
@@ -118,7 +118,7 @@ func TestThrottler_Read_ContextDone(t *testing.T) {
 	}()
 
 	s, err := th.Read(ctx)
-	if s != speedtest.BytesPerSecond(0) {
+	if s != units.BytesPerSecond(0) {
 		t.Fail()
 		t.Log("Should have gotten zero speed.")
 	}

@@ -2,24 +2,18 @@ package main
 
 import (
 	"context"
-	"fmt"
 
-	"go.jonnrb.io/speedtest"
+	"go.jonnrb.io/speedtest/fastdotcom"
+	"go.jonnrb.io/speedtest/units"
 )
 
 type RadarSign interface {
-	Read(context.Context) (speedtest.BytesPerSecond, error)
+	Read(context.Context) (units.BytesPerSecond, error)
 }
 
-type RepeatableSpeedTest struct {
-	// SpeedTest client to use on each probe.
-	//
-	Client speedtest.Client
-
-	// Selected few servers (should be by geographic proximity) to select from
-	// in fastestServer().
-	//
-	CandidateServers []speedtest.Server
+type RepeatableSpeedTest interface {
+	ProbeDownloadSpeed(ctx context.Context) (units.BytesPerSecond, error)
+	ProbeUploadSpeed(ctx context.Context) (units.BytesPerSecond, error)
 }
 
 type DownloadRadarSign struct {
@@ -30,54 +24,40 @@ type UploadRadarSign struct {
 	RepeatableSpeedTest
 }
 
-func NewRepeatableSpeedTest(ctx context.Context, candidates int) (st RepeatableSpeedTest, err error) {
-	if candidates <= 0 {
-		err = fmt.Errorf("must try for at least 1 candidate; got %v", candidates)
-		return
-	}
+func NewRepeatableSpeedTest() RepeatableSpeedTest {
+	return &FastDotComSpeedTest{}
+}
 
-	cfg, err := st.Client.Config(ctx)
+func (d *DownloadRadarSign) Read(ctx context.Context) (units.BytesPerSecond, error) {
+	return d.ProbeDownloadSpeed(ctx)
+}
+
+func (u *UploadRadarSign) Read(ctx context.Context) (units.BytesPerSecond, error) {
+	return u.ProbeUploadSpeed(ctx)
+}
+
+type FastDotComSpeedTest struct {
+	Client fastdotcom.Client
+}
+
+func (f *FastDotComSpeedTest) ProbeDownloadSpeed(ctx context.Context) (units.BytesPerSecond, error) {
+	m, err := f.getManifest(ctx)
 	if err != nil {
-		return
+		return units.BytesPerSecond(0), err
 	}
+	return m.ProbeDownloadSpeed(ctx, &f.Client, nil)
+}
 
-	servers, err := st.Client.LoadAllServers(ctx)
+func (f *FastDotComSpeedTest) ProbeUploadSpeed(ctx context.Context) (units.BytesPerSecond, error) {
+	m, err := f.getManifest(ctx)
 	if err != nil {
-		return
+		return units.BytesPerSecond(0), err
 	}
-	if len(servers) == 0 {
-		err = fmt.Errorf("no servers found")
-		return
-	}
-
-	_ = speedtest.SortServersByDistance(servers, cfg.Coordinates)
-	if len(servers) > candidates {
-		servers = servers[:candidates]
-	}
-
-	st.CandidateServers = servers
-	return
+	return m.ProbeUploadSpeed(ctx, &f.Client, nil)
 }
 
-func (d *DownloadRadarSign) Read(ctx context.Context) (speed speedtest.BytesPerSecond, err error) {
-	if s, err := d.RepeatableSpeedTest.fastestServer(ctx); err == nil {
-		speed, err = s.ProbeDownloadSpeed(ctx, &d.RepeatableSpeedTest.Client, nil)
-	}
-	return
-}
-
-func (u *UploadRadarSign) Read(ctx context.Context) (speed speedtest.BytesPerSecond, err error) {
-	if s, err := u.RepeatableSpeedTest.fastestServer(ctx); err == nil {
-		speed, err = s.ProbeUploadSpeed(ctx, &u.RepeatableSpeedTest.Client, nil)
-	}
-	return
-}
-
-// Picks the server with the lowest latency from the CandidateServers.
-//
-func (r *RepeatableSpeedTest) fastestServer(ctx context.Context) (speedtest.Server, error) {
-	s := make([]speedtest.Server, len(r.CandidateServers))
-	copy(s, r.CandidateServers)
-	_, err := speedtest.StableSortServersByAverageLatency(s, ctx, &r.Client, speedtest.DefaultLatencySamples)
-	return s[0], err
+func (f *FastDotComSpeedTest) getManifest(ctx context.Context) (*fastdotcom.Manifest, error) {
+	ctx, cancel := context.WithTimeout(ctx, *configureTimeout)
+	defer cancel()
+	return fastdotcom.GetManifest(ctx, *candidateServers)
 }

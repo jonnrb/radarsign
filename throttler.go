@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"go.jonnrb.io/speedtest"
+	"go.jonnrb.io/speedtest/units"
 )
 
 // Helper to make a new Throttler. Source field is left zero because it is
@@ -30,10 +30,10 @@ type Throttler struct {
 
 	mu    sync.Mutex
 	last  time.Time
-	gauge speedtest.BytesPerSecond
+	gauge units.BytesPerSecond
 }
 
-func (t *Throttler) Read(ctx context.Context) (speed speedtest.BytesPerSecond, err error) {
+func (t *Throttler) Read(ctx context.Context) (speed units.BytesPerSecond, err error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 

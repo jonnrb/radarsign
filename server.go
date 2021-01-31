@@ -59,7 +59,7 @@ func (s *Server) registerDownload(st RepeatableSpeedTest) error {
 	t.Source = &DownloadRadarSign{st}
 
 	s.Download = NewRadarSignMetric(t, downloadSpeedGaugeOpts)
-	s.Download.Timeout = *downloadTime
+	s.Download.Timeout = *downloadTime + *configureTimeout
 
 	return s.Registry.Register(s.Download)
 }
@@ -69,7 +69,7 @@ func (s *Server) registerUpload(st RepeatableSpeedTest) error {
 	t.Source = &UploadRadarSign{st}
 
 	s.Upload = NewRadarSignMetric(t, uploadSpeedGaugeOpts)
-	s.Upload.Timeout = *uploadTime
+	s.Upload.Timeout = *uploadTime + *configureTimeout
 
 	return s.Registry.Register(s.Upload)
 }
